@@ -1,63 +1,16 @@
 <template>
   <div class="app-wrapper">
     <el-container class="layout-container-demo">
-      <el-aside width="200px">
-        <el-scrollbar>
-          <el-menu :default-openeds="['1', '3']">
-            <el-sub-menu index="1">
-              <template #title>
-                <el-icon><message /></el-icon>Navigator One
-              </template>
-              <el-menu-item-group>
-                <template #title>Group 1</template>
-                <el-menu-item index="1-1">Option 1</el-menu-item>
-                <el-menu-item index="1-2">Option 2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="Group 2">
-                <el-menu-item index="1-3">Option 3</el-menu-item>
-              </el-menu-item-group>
-              <el-sub-menu index="1-4">
-                <template #title>Option4</template>
-                <el-menu-item index="1-4-1">Option 4-1</el-menu-item>
-              </el-sub-menu>
-            </el-sub-menu>
-            <el-sub-menu index="2">
-              <template #title>
-                <el-icon><icon-menu /></el-icon>Navigator Two
-              </template>
-              <el-menu-item-group>
-                <template #title>Group 1</template>
-                <el-menu-item index="2-1">Option 1</el-menu-item>
-                <el-menu-item index="2-2">Option 2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="Group 2">
-                <el-menu-item index="2-3">Option 3</el-menu-item>
-              </el-menu-item-group>
-              <el-sub-menu index="2-4">
-                <template #title>Option 4</template>
-                <el-menu-item index="2-4-1">Option 4-1</el-menu-item>
-              </el-sub-menu>
-            </el-sub-menu>
-            <el-sub-menu index="3">
-              <template #title>
-                <el-icon><setting /></el-icon>Navigator Three
-              </template>
-              <el-menu-item-group>
-                <template #title>Group 1</template>
-                <el-menu-item index="3-1">Option 1</el-menu-item>
-                <el-menu-item index="3-2">Option 2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="Group 2">
-                <el-menu-item index="3-3">Option 3</el-menu-item>
-              </el-menu-item-group>
-              <el-sub-menu index="3-4">
-                <template #title>Option 4</template>
-                <el-menu-item index="3-4-1">Option 4-1</el-menu-item>
-              </el-sub-menu>
-            </el-sub-menu>
-          </el-menu>
+      <el-scrollbar width="200px">
+        <a-menu
+          width="200px"
+          v-model:open-keys="state.openKeys"
+          v-model:selected-keys="state.selectedKeys"
+          mode="inline"
+          :items="menuItems"
+          @click="handleMenuClick"
+        />
         </el-scrollbar>
-      </el-aside>
       <el-container>
         <el-header style="text-align: right; font-size: 12px">
           <div class="toolbar">
@@ -70,7 +23,7 @@
                   <el-dropdown-item>View</el-dropdown-item>
                   <el-dropdown-item>Add</el-dropdown-item>
                   <el-dropdown-item>Delete</el-dropdown-item>
-                  <el-dropdown-item @click = "logout">logout</el-dropdown-item>
+                  <el-dropdown-item @click="logout">logout</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -87,12 +40,125 @@
 </template>
 
 <script lang="ts" setup>
-import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
+import { onMounted, reactive } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import type { MenuProps } from 'ant-design-vue'
+import { Setting } from '@element-plus/icons-vue'
+
+// 定义菜单项类型
+interface MenuDataItem {
+  key: string
+  title: string
+  icon?: string
+  route?: string
+  children?: MenuDataItem[]
+}
+
+// 定义响应式数据
+const menuItems = reactive<MenuDataItem[]>([])
+
+const state = reactive({
+  rootSubmenuKeys: [],
+  openKeys: [],
+  selectedKeys: [],
+})
+
+const apiClient = axios.create({
+  baseURL: 'http://127.0.0.1:8080',
+  timeout: 10000,
+})
+const router = useRouter()
+
+// 获取菜单数据
+const fetchMenuData = async () => {
+  try {
+    // 假设后端提供获取菜单的接口
+    const response = await apiClient.get('/rights')
+
+    if (response.data) {
+      // 转换后端数据格式为 ant-design-vue 所需格式
+      // const data = transformMenuData(response.data || [])
+      menuItems.splice(0, menuItems.length, ...(response.data || []))
+      state.openKeys = response.data.defaultOpeneds || []
+    }
+  } catch (error) {
+    console.error('获取菜单数据失败:', error)
+    // 出错时使用默认菜单数据
+    menuItems.splice(
+      0,
+      menuItems.length,
+      ...[
+        {
+          key: '1',
+          title: 'Navigator One',
+          icon: 'Message',
+          children: [
+            {
+              key: '1-1',
+              title: 'Option 1',
+              route: '/buttons',
+            },
+            {
+              key: '1-2',
+              title: 'Option 2',
+              route: '/data',
+            },
+          ],
+        },
+        {
+          key: '2',
+          title: 'Navigator Two',
+          icon: 'Menu',
+          children: [
+            {
+              key: '2-1',
+              title: 'Option 1',
+            },
+            {
+              key: '2-2',
+              title: 'Option 2',
+            },
+          ],
+        },
+        {
+          key: '3',
+          title: 'Navigator Three',
+          icon: 'Setting',
+          children: [
+            {
+              key: '3-1',
+              title: 'Option 1',
+            },
+            {
+              key: '3-2',
+              title: 'Option 2',
+            },
+          ],
+        },
+      ],
+    )
+  }
+}
+
+// 处理菜单点击事件
+const handleMenuClick: MenuProps['onClick'] = ({ item }) => {
+  const route = item.route
+  console.log(route)
+  if (route) {
+    router.push(route)
+  }
+}
 
 const logout = () => {
   localStorage.removeItem('authToken')
   window.location.reload()
 }
+
+// 组件挂载时获取菜单数据
+onMounted(() => {
+  fetchMenuData()
+})
 </script>
 
 <style scoped>

@@ -1,45 +1,23 @@
-# vue3-learn
+**# vue3-learn
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a frontend project for learning Vue3. 
 
-## Recommended IDE Setup
+The project has simply implemented a typical backend management system template.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+These are the open-source projects utilized in this project:
 
-## Type Support for `.vue` Imports in TS
+- vite - https://vitejs.dev/
+- vue - https://vuejs.org/
+- vue-router - https://router.vuejs.org/
+- element-plus - https://element-plus.org/
+- axios - https://axios-http.com/
+- pinia - https://pinia.vuejs.org/
+- vue-tsc - https://github.com/vuejs/language-tools/tree/master/packages/vue-tsc
+- typescript - https://www.typescriptlang.org/
+- vitest - https://vitest.dev/
+- ant-design-vue - https://www.antdv.com/
+- unplugin-element-plus - https://github.com/element-plus/unplugin-element-plus
+- eslint - https://eslint.org/
+- prettier - https://prettier.io/
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-pnpm test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
+Thanks to all the open-source projects~
